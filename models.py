@@ -1,18 +1,26 @@
-from pydantic import BaseModel
+import uuid
+from pydantic import BaseModel, Field
 from decimal import Decimal
 from datetime import datetime
-import uuid
 
 
 class Location(BaseModel):
-    id: str = str(uuid.uuid4())
-    date: str = str(datetime.now())
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date: str = Field(default_factory=lambda: str(datetime.now()))
     name: str = None
     lat: Decimal
     lon: Decimal
     radius: Decimal
 
-
-loc = Location(name="Нью-Васюки", lat=16.3248242424942942043, lon=19, radius=5)
-
-#print(loc.id)
+    def to_row(self, sq):
+        """Возвращает данные в виде списка для записи в таблицу."""
+        base = [
+            self.id,
+            self.date,
+            self.name,
+            str(self.lat),
+            str(self.lon),
+            str(self.radius),
+        ]
+        base.append(sq)
+        return base

@@ -1,6 +1,7 @@
 import os
-from dotenv import load_dotenv
 import gspread
+import asyncio
+from dotenv import load_dotenv
 from google.oauth2.service_account import Credentials
 
 
@@ -14,24 +15,22 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive",
 ]
 
-# Авторизация и клиент
+# Авторизация
 _creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 _client = gspread.authorize(_creds)
-
-# Открываем таблицу и лист по URL
 _spreadsheet = _client.open_by_url(SPREADSHEET_URL)
 _sheet = _spreadsheet.sheet1
 
 
-def append_row(row: list):
+async def append_row(row: list):
     """
     Добавляет одну строку в таблицу.
     """
-    return _sheet.append_row(row)
+    return await asyncio.to_thread(_sheet.append_row, row)
 
 
-def get_all_values():
+async def get_all_values():
     """
     Возвращает все строки таблицы как список списков.
     """
-    return _sheet.get_all_values()
+    return await asyncio.to_thread(_sheet.get_all_values)
