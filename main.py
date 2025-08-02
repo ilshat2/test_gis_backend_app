@@ -10,13 +10,18 @@ service = LocationService()
 
 @app.post("/")
 async def create_location(location: Location):
-    """Принимаем локацию и записываем её в таблицу."""
-    await service.save_location(location)
-    return {"status": "ok", "message": "Location saved"}
+    """
+    Принимает данные о локации, сохраняет их в гугл таблицу и возвращает
+    объект в формате geojson с вычисленной площадью покрытия.
+    """
+    coverage_area = await service.save_location(location)
+    return service.to_geojson(location, coverage_area)
 
 
 @app.get("/")
 async def list_location():
-    """Читаем все данные из таблицы."""
+    """
+    Читаем все данные из таблицы.
+    """
     data = await get_all_values()
     return {"rows": data}
