@@ -30,7 +30,7 @@ def _generate_circle_geojson_sync(data, coverage_area, num_points):
         "geometry": mapping(circle_wgs84),
         "properties": {
             "id": data.id,
-            "date": data.date,
+            "date": data.date.isoformat(),
             "name": data.name,
             "lon": float(data.lon),
             "lat": float(data.lat),

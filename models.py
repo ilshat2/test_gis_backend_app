@@ -7,7 +7,7 @@ from datetime import datetime
 
 class Location(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    date: str = Field(default_factory=lambda: str(datetime.now()))
+    date: datetime = Field(default_factory=datetime.utcnow)
     name: str = Field(None, max_length=50)
     lon: Decimal = Field(
         ..., ge=-180, le=180, description="Долгота в градусах (-180..180)"
@@ -81,7 +81,7 @@ class Location(BaseModel):
         """
         base = [
             self.id,
-            self.date,
+            self.date.isoformat(),
             self.name,
             str(self.lat),
             str(self.lon),

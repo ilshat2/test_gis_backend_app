@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from db import get_session
 from models import Location
 from service import LocationService
 from google_sheets_access import get_all_values
@@ -9,14 +11,17 @@ service = LocationService()
 
 
 @app.post("/")
-async def create_location(location: Location):
+async def create_location(
+    location: Location, session: AsyncSession = Depends(get_session)
+):
     """
-    Принимает данные о локации, сохраняет их в гугл таблицу и возвращает
-    объект в формате geojson с вычисленной площадью покрытия.
+    Создает новую локацию:
+    - Проверяет кэш postgresql
+    - Если запрос выполне впервые то инициируется долгая операция,
+    данные сохраняются в гугл таблицу, и базу данных
+    - Возвращает данные в geijson формате
     """
-    coverage_area = await service.save_location(location)
-    geojson = await service.to_geojson(location, coverage_area)
-    return geojson
+    return await service.save_location(location, session)
 
 
 @app.get("/")
