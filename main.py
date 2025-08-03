@@ -15,13 +15,14 @@ async def create_location(location: Location):
     объект в формате geojson с вычисленной площадью покрытия.
     """
     coverage_area = await service.save_location(location)
-    return service.to_geojson(location, coverage_area)
+    geojson = await service.to_geojson(location, coverage_area)
+    return geojson
 
 
 @app.get("/")
 async def list_location():
     """
-    Читаем все данные из таблицы.
+    Читает все данные из таблицы.
     """
     data = await get_all_values()
     return {"rows": data}
