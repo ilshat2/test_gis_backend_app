@@ -17,7 +17,9 @@ class LocationService:
     - Сохраняет данные в Google Sheets.
     """
 
-    async def save_location(self, data: Location, session: AsyncSession) -> dict:
+    async def save_location(
+            self, data: Location, session: AsyncSession
+    ) -> dict:
         """
         Сохраняет локацию:
         - Проверяет кэш по id.

@@ -20,7 +20,10 @@ SCOPES = [
 ]
 
 # Авторизация и открытие таблицы
-_creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+_creds = Credentials.from_service_account_file(
+    SERVICE_ACCOUNT_FILE,
+    scopes=SCOPES
+)
 _client = gspread.authorize(_creds)
 _spreadsheet = _client.open_by_url(SPREADSHEET_URL)
 _sheet = _spreadsheet.sheet1

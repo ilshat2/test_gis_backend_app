@@ -1,6 +1,6 @@
 import uuid
 from decimal import Decimal
-from typing import List, Any
+from typing import Any
 from datetime import datetime
 from pydantic_core import ErrorDetails, PydanticCustomError
 from pydantic import BaseModel, Field, model_validator, ValidationError
@@ -15,11 +15,22 @@ class Location(BaseModel):
     date: datetime = Field(default_factory=datetime.utcnow)
     name: str = Field(None, max_length=50)
     lon: Decimal = Field(
-        ..., ge=-180, le=180, description="Долгота в градусах (-180..180)"
+        ...,
+        ge=-180,
+        le=180,
+        description="Долгота в градусах (-180..180)"
     )
-    lat: Decimal = Field(..., gt=-90, le=90, description="Широта в градусах (-90..90)")
+    lat: Decimal = Field(
+        ...,
+        gt=-90,
+        le=90,
+        description="Широта в градусах (-90..90)"
+    )
     radius: Decimal = Field(
-        ..., gt=0, le=10000, description="Радиус в метрах (0..10000)"
+        ...,
+        gt=0,
+        le=10000,
+        description="Радиус в метрах (0..10000)"
     )
 
     @model_validator(mode="before")

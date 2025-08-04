@@ -33,7 +33,10 @@ def _generate_circle_geojson_sync(
     ).transform
 
     # Центр и буфер
-    centre_point = transform(project_to_m, Point(float(data.lon), float(data.lat)))
+    centre_point = transform(
+        project_to_m,
+        Point(float(data.lon), float(data.lat))
+    )
     circle = centre_point.buffer(
         float(data.radius),
         resolution=num_points,

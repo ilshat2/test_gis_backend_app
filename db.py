@@ -10,7 +10,11 @@ DATABASE_URL = "postgresql+asyncpg://ilshat:6330@localhost:5432/testdb"
 engine = create_async_engine(DATABASE_URL, echo=True)
 
 # Фабрика асинхронных сессий
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+AsyncSessionLocal = sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
 
 # Базовый класс для моделей ORM
 Base = declarative_base()
