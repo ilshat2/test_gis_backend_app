@@ -5,8 +5,8 @@ from sqlalchemy import Column, String, Numeric, JSON, TIMESTAMP
 
 class LocationCache(Base):
     """
-    Модель кэша в postgresql.
-    Хранит данные о локациях с готовым geojson.
+    ORM-модель кэша локаций в PostgreSQL.
+    Хранит данные о локациях с готовым GeoJSON.
     """
 
     __tablename__ = "location_cache"

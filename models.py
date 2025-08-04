@@ -1,11 +1,16 @@
 import uuid
-from pydantic import BaseModel, Field, model_validator, ValidationError
-from pydantic_core import ErrorDetails, PydanticCustomError
 from decimal import Decimal
+from typing import List, Any
 from datetime import datetime
+from pydantic_core import ErrorDetails, PydanticCustomError
+from pydantic import BaseModel, Field, model_validator, ValidationError
 
 
 class Location(BaseModel):
+    """
+    Pydantic-модель для валидации данных локации.
+    """
+
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     date: datetime = Field(default_factory=datetime.utcnow)
     name: str = Field(None, max_length=50)
@@ -19,9 +24,9 @@ class Location(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def check_all(cls, values):
+    def check_all(cls, values: dict[str, Any]) -> dict:
         """
-        Проверяет все поля и собирает ошибки в одном ответе.
+        Проверяет поля модели и собирает все ошибки.
         """
         errors: list[ErrorDetails] = []
 
@@ -75,17 +80,16 @@ class Location(BaseModel):
 
         return values
 
-    def to_row(self, sq):
+    def to_row(self, sq: str) -> list[str]:
         """
-        Возвращает данные в виде списка для записи в таблицу.
+        Преобразует данные в список для записи в Google Sheets.
         """
-        base = [
+        return [
             self.id,
             self.date.isoformat(),
             self.name,
             str(self.lat),
             str(self.lon),
             str(self.radius),
+            sq,
         ]
-        base.append(sq)
-        return base

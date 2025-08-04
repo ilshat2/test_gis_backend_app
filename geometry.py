@@ -2,15 +2,29 @@ import pyproj
 import asyncio
 from shapely.geometry import Point, mapping
 from shapely.ops import transform
+from typing import Any
 
 
-def _generate_circle_geojson_sync(data, coverage_area, num_points):
+def _generate_circle_geojson_sync(
+    data: Any, coverage_area: float, num_points: int
+) -> dict:
     """
-    Синхронная функция генерации geojson полигона круга вокруг точки.
-    Используется внутри одного потока.
+    Синхронно создает GeoJSON круг вокруг точки.
+
+    Args:
+        data: Объект с атрибутами lon, lat, radius.
+        coverage_area: Площадь покрытия.
+        num_points: Количество точек для полигона.
+
+    Returns:
+        dict: GeoJSON Feature с полигоном.
     """
+
+    # Системы координат
     proj_wgs84 = pyproj.CRS("EPSG:4326")
     proj_merc = pyproj.CRS("EPSG:3857")
+
+    # Преобразования координат
     project_to_m = pyproj.Transformer.from_crs(
         proj_wgs84, proj_merc, always_xy=True
     ).transform
@@ -18,6 +32,7 @@ def _generate_circle_geojson_sync(data, coverage_area, num_points):
         proj_merc, proj_wgs84, always_xy=True
     ).transform
 
+    # Центр и буфер
     centre_point = transform(project_to_m, Point(float(data.lon), float(data.lat)))
     circle = centre_point.buffer(
         float(data.radius),
@@ -25,6 +40,7 @@ def _generate_circle_geojson_sync(data, coverage_area, num_points):
     )
     circle_wgs84 = transform(project_to_deg, circle)
 
+    # Формируем GeoJSON
     return {
         "type": "Feature",
         "geometry": mapping(circle_wgs84),
@@ -40,10 +56,12 @@ def _generate_circle_geojson_sync(data, coverage_area, num_points):
     }
 
 
-async def generate_circle_geojson(data, coverage_area, num_points=64):
+async def generate_circle_geojson(
+    data: Any, coverage_area: float, num_points: int = 64
+) -> dict:
     """
-    Асинхронная функция вызывает синхронную функцию
-    _generate_circle_geojson_sync в отдельном потоке.
+    Асинхронно создает GeoJSON круг вокруг точки
+    (вызывает синхронную функцию в отдельном потоке).
     """
     return await asyncio.to_thread(
         _generate_circle_geojson_sync, data, coverage_area, num_points

@@ -12,18 +12,17 @@ from geometry import generate_circle_geojson
 class LocationService:
     """
     Сервис для работы с локациями:
-    - Читает/пишет кэш в postgresql
-    - Генерирует geojson
-    - Созраняет данные в гугл таблицу
+    - Читает/пишет кэш в PostgreSQL.
+    - Генерирует GeoJSON.
+    - Сохраняет данные в Google Sheets.
     """
 
-    async def save_location(self, data: Location, session: AsyncSession):
+    async def save_location(self, data: Location, session: AsyncSession) -> dict:
         """
         Сохраняет локацию:
-        - Проверяет кэш по id в postgresql
-        - Если запись есть возвращает ее сразу, если нет
-        имитирует долгую операцию (5 секунд) и сохраняет данные
-        в базу данных и гугл таблицу
+        - Проверяет кэш по id.
+        - Если запись новая: имитирует долгую операцию (5с),
+          сохраняет данные в БД и Google Sheets.
         """
 
         # Проверка кэша
@@ -41,10 +40,10 @@ class LocationService:
         coverage_area = data.radius**2 * Decimal(str(math.pi))
         geojson = await generate_circle_geojson(data, coverage_area)
 
-        # Сохранение в гугл таблицу
+        # Сохранение в Google Sheets
         await append_row(data.to_row(str(coverage_area)))
 
-        # Сохранение в базу данных
+        # Сохранение в БД
         cache_entry = LocationCache(
             id=data.id,
             date=data.date,
@@ -59,8 +58,10 @@ class LocationService:
         await session.commit()
         return geojson
 
-    async def to_geojson(self, data: Location, coverage_area, num_points=64):
+    async def to_geojson(
+        self, data: Location, coverage_area: Decimal, num_points: int = 64
+    ) -> dict:
         """
-        Генерирует geojson полигоном круга вокруг точки.
+        Генерирует GeoJSON полигон круга вокруг точки.
         """
         return await generate_circle_geojson(data, coverage_area, num_points)
