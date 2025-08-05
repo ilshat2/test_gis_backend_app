@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from db import get_session
-from models import Location
-from service import LocationService
+from app.db import get_session
+from app.models import Location
+from app.service import LocationService
 
 
 app = FastAPI()

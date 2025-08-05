@@ -12,25 +12,14 @@ class Location(BaseModel):
     """
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    date: datetime = Field(default_factory=datetime.utcnow)
+    date: datetime = Field(default_factory=datetime.now)
     name: str = Field(None, max_length=50)
     lon: Decimal = Field(
-        ...,
-        ge=-180,
-        le=180,
-        description="Долгота в градусах (-180..180)"
+        ..., ge=-180, le=180, description="Долгота в градусах (-180..180)"
     )
-    lat: Decimal = Field(
-        ...,
-        gt=-90,
-        le=90,
-        description="Широта в градусах (-90..90)"
-    )
+    lat: Decimal = Field(..., gt=-90, le=90, description="Широта в градусах (-90..90)")
     radius: Decimal = Field(
-        ...,
-        gt=0,
-        le=10000,
-        description="Радиус в метрах (0..10000)"
+        ..., gt=0, le=10000, description="Радиус в метрах (0..10000)"
     )
 
     @model_validator(mode="before")

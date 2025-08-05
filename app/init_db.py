@@ -1,6 +1,10 @@
+import sys
+import os
 import asyncio
-import models_cache
-from db import engine, Base
+import app.models_cache
+from app.db import engine, Base
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 async def init_models() -> None:

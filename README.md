@@ -45,11 +45,24 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
---- 
+## Эндпоинты
+
+- POST / — создать локацию (возвращает GeoJSON).
+
+Пример запроса:
+
+```
+{ "name: 'Moscow'  # Опциональный параметр
+  "lon": 31.1,
+  "lat": 65.12,
+  "radius": 500
+}
+```
+
+---
 
 Ссылка на [Google Sheets](https://docs.google.com/spreadsheets/d/1C35kpV9UfKaBHL0VwxU7SWIFhQD0ymqeZuGBqKI1vY0/edit?pli=1&gid=0#gid=0)
 
---- 
+---
 
-Для проверки работы файл `data-table.json` с данными от сервисного аккаунта могу залить в репозиторий.
-
+Для проверки работы я могу залить в репозиторий файл `data-table.json` с данными от сервисного аккаунта.
